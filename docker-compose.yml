@@ -1,0 +1,28 @@
+services:
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql-devops
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=devops
+      - MYSQL_DATABASE=productos_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+  
+  app:
+    build: .
+    container_name: productos-devops
+    depends_on:
+      - mysql
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=devops
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-devops:3306/productos_db?createDatabaseIfNotExist=true
+
+volumes:
+  mysql_data:
